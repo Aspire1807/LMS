@@ -1,0 +1,65 @@
+{% extends 'layout.html' %}
+{% block content %}
+<div class='grid'>
+  <div class='panel'>
+    <h3>Issue a Book</h3>
+    <form method='post' action='{{ url_for("create_issue") }}'>
+      <label>Book Name</label>
+      <input type='text' name='book_name' required>
+      <label>Student Name</label>
+      <input type='text' name='student_name' required>
+      <label>Student ID</label>
+      <input type='text' name='student_id' required>
+      <label>Branch</label>
+      <input type='text' name='branch' required>
+      <label>Year / Semester</label>
+      <input type='text' name='year_semester' placeholder='e.g., 2nd / Sem 3' required>
+      <label>Issue Date</label>
+      <input type='date' name='issue_date' required>
+      <button class='btn wide' type='submit'>Add Issue Record</button>
+    </form>
+    <div class='toolbar'>
+      <a class='btn danger' href='{{ url_for("delete_all") }}'>Delete All Records</a>
+    </div>
+  </div>
+
+  <div class='panel'>
+    <h3>All Issue Records</h3>
+    <div class='table-wrap'>
+      <table>
+        <thead>
+          <tr>
+            <th>#</th><th>Book</th><th>Student</th><th>ID</th><th>Branch</th>
+            <th>Year/Sem</th><th>Issue</th><th>Return</th><th>Status</th><th>Fine</th><th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for r in rows %}
+          <tr>
+            <td>{{ r.id }}</td>
+            <td>{{ r.book_name }}</td>
+            <td>{{ r.student_name }}</td>
+            <td>{{ r.student_id }}</td>
+            <td>{{ r.branch }}</td>
+            <td>{{ r.year_semester }}</td>
+            <td>{{ r.issue_date }}</td>
+            <td>{{ r.return_date or '-' }}</td>
+            <td>{{ r.status }}</td>
+            <td>₹{{ r.fine }}</td>
+            <td class='actions'>
+              {% if r.status == 'Issued' %}
+                <form method='post' action='{{ url_for("mark_return", issue_id=r.id) }}'>
+                  <input type='date' name='return_date'>
+                  <button class='btn small' type='submit'>Return</button>
+                </form>
+              {% endif %}
+              <a class='btn small outline' href='{{ url_for("delete_issue", issue_id=r.id) }}'>Delete</a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}
